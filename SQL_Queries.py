@@ -115,3 +115,73 @@ query2 = conn.execute(
         """
     )
 )
+
+# ------------- Query 3 -------------
+# Write a SQL query to display only the details of employees who either
+# earn the highest salary or the lowest salary in each department from the employee table
+
+# I use windows functions to get the lowest and highest salary by department
+query3 = conn.execute(
+    text(
+        """
+        with
+            high_low_salary as (select *, min(salary) over (partition by dept_name) as min_salary,
+            max(salary) over(partition by dept_name) as max_salary
+            from employee),
+
+            high_low_salary_top as (
+            select *, case when salary in (min_salary, max_salary) then 1
+                    else NULL end as high_or_low_top
+                    from high_low_salary
+                    order by dept_name, salary)
+
+        select emp_id, emp_name, dept_name, salary, max_salary, min_salary
+        from high_low_salary_top
+        where high_or_low_top = 1;
+        """
+    )
+)
+
+
+# ------------- Query 4 -------------
+# From the doctors table, fetch the details of doctors who
+# work in the same hospital but in different specialty
+
+# Create doctors table
+doctors_table = conn.execute(
+    text(
+        """
+        drop table if exists doctors;
+
+        create table doctors (
+        id int primary key,
+        name varchar(50) not null,
+        speciality varchar(100),
+        hospital varchar(50),
+        city varchar(50),
+        consultation_fee int
+        );
+
+        insert into doctors values
+        (1, 'Dr. Shashank', 'Ayurveda', 'Apollo Hospital', 'Bangalore', 2500),
+        (2, 'Dr. Abdul', 'Homeopathy', 'Fortis Hospital', 'Bangalore', 2000),
+        (3, 'Dr. Shwetha', 'Homeopathy', 'KMC Hospital', 'Manipal', 1000),
+        (4, 'Dr. Murphy', 'Dermatology', 'KMC Hospital', 'Manipal', 1500),
+        (5, 'Dr. Farhana', 'Physician', 'Gleneagles Hospital', 'Bangalore', 1700),
+        (6, 'Dr. Maryam', 'Physician', 'Gleneagles Hospital', 'Bangalore', 1500);
+        """
+    )
+)
+
+# I joined the table with itself to obtain the desired result
+query4 = conn.execute(
+    text(
+        """
+        select d1.name, d1.speciality, d1.hospital
+        from doctors as d1
+        join doctors as d2
+        on (d1.hospital = d2.hospital
+        and d1.speciality != d2.speciality);
+        """
+    )
+)
