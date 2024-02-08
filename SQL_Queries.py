@@ -185,3 +185,62 @@ query4 = conn.execute(
         """
     )
 )
+
+
+# ------------- Query 5 -------------
+# From the login_details table, fetch the users who
+# logged in consecutively 3 or more times
+
+# Create login_details table
+login_details_table = conn.execute(
+    text(
+        """
+        drop table if exists login_details;
+
+        create table login_details (
+        login_id int primary key,
+        user_name varchar(50) not null,
+        login_date date);
+
+        insert into login_details values
+        (101, 'Michael', current_date),
+        (102, 'James', current_date),
+        (103, 'Stewart', current_date+1),
+        (104, 'Stewart', current_date+1),
+        (105, 'Stewart', current_date+1),
+        (106, 'Michael', current_date+2),
+        (107, 'Michael', current_date+2),
+        (108, 'Stewart', current_date+3),
+        (109, 'Stewart', current_date+3),
+        (110, 'James', current_date+4),
+        (111, 'James', current_date+4),
+        (112, 'James', current_date+5),
+        (113, 'James', current_date+6);
+        """
+    )
+)
+
+# I use the lead and lag functions to compare the user name
+# with the line before and after, and see if they coincide
+query5 = conn.execute(
+    text(
+        """
+        with login_details_temp as (
+            select *,
+                    case when lead(user_name) over() = user_name
+                    and lag(user_name) over() = user_name
+                    then 1 else null end as top_name
+            from login_details),
+
+            login_details_temp2 as (select *,
+                    case when lead(top_name) over() = 1
+                    or lag(top_name) over() = 1
+                    or top_name = 1
+                    then 1 else null end as top_name2
+            from login_details_temp)
+
+        select user_name,login_date from login_details_temp2
+        where top_name2 = 1;
+        """
+    )
+)
