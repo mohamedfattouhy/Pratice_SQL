@@ -244,3 +244,47 @@ query5 = conn.execute(
         """
     )
 )
+
+
+# ------------- Query 6 -------------
+# From the students table, write a SQL query to
+# interchange the adjacent student names
+
+# Create students table
+students_table = conn.execute(
+    text(
+        """
+        drop table if exists students;
+
+        create table students (
+        id int primary key,
+        student_name varchar(50) not null);
+
+        insert into students values
+        (1, 'James'),
+        (2, 'Michael'),
+        (3, 'George'),
+        (4, 'Stewart'),
+        (5, 'Robin');
+        """
+    )
+)
+
+# I use the lead and lag functions to interchange student names
+# based on the parity of the id column
+query6 = conn.execute(
+    text(
+        """
+        with
+        student_adjacent as (select *,
+                                case when id % 2 = 0 then lag(student_name) over()
+                                else lead(student_name) over() end as adjacent_name
+                            from students)
+
+        select id, student_name,
+            case when adjacent_name is not null then adjacent_name
+                    else student_name end as new_student_name
+        from student_adjacent;
+        """
+    )
+)
