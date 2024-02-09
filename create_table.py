@@ -188,3 +188,70 @@ weather_table = conn.execute(
         """
     )
 )
+
+# ------------- Query 8 -------------
+# Create event_category table
+event_category_table = conn.execute(
+    text(
+        """
+        drop table if exists event_category;
+
+        create table event_category (
+        event_name varchar(50),
+        category varchar(100));
+
+        insert into event_category values
+        ('Chemotherapy', 'Procedure'),
+        ('Radiation', 'Procedure'),
+        ('Immunosuppressants', 'Prescription'),
+        ('BTKI', 'Prescription'),
+        ('Biopsy', 'Test');
+        """
+    )
+)
+
+# Create physician_speciality table
+physician_speciality_table = conn.execute(
+    text(
+        """
+        drop table if exists physician_speciality;
+
+        create table physician_speciality (
+        physician_id int,
+        speciality varchar(50));
+
+        insert into physician_speciality values
+        1000, 'Radiologist'),
+        (2000, 'Oncologist'),
+        (3000, 'Hermatologist'),
+        (4000, 'Oncologist'),
+        (5000, 'Pathologist'),
+        (6000, 'Oncologist');
+        """
+    )
+)
+
+# Create patient_treatment table
+patient_treatment_table = conn.execute(
+    text(
+        """
+        drop table if exists patient_treatment;
+
+        create table patient_treatment (
+        patient_id int,
+        event_name varchar(50),
+        physician_id int);
+
+        insert into patient_treatment values
+        (1,'Radiation', 1000),
+        (2,'Chemotherapy', 2000),
+        (1,'Biopsy', 1000),
+        (3,'Immunosuppressants', 2000),
+        (4,'BTKI', 3000),
+        (5,'Radiation', 4000),
+        (4,'Chemotherapy', 2000),
+        (1,'Biopsy', 5000),
+        (6,'Chemotherapy', 6000);
+        """
+    )
+)
