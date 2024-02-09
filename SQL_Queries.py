@@ -185,3 +185,40 @@ query7 = conn.execute(
         """
     )
 )
+
+# ------------- Query 8 -------------
+# From the following 3 tables (event_category, physician_speciality, patient_treatment),
+# write a SQL query to get the histogram of specialties of the unique physicians
+# who have done the procedures but never did prescribe anything
+
+# I do consecutive joins to have a single table while filtering
+# the data according to the desired query
+query8 = conn.execute(
+    text(
+        """
+        with tb1 as (
+                select pt.patient_id, pt.event_name, pt.physician_id, ec.category
+                from patient_treatment as pt
+                join
+                event_category as ec
+                on (pt.event_name = ec.event_name)
+            ),
+
+            tb2 as (
+                select distinct event_name, physician_id from tb1
+                where category = 'Procedure'
+                and physician_id not in (select distinct physician_id from tb1 where category = 'Prescription')
+            ),
+
+            tb3 as (
+                select tb2.physician_id, ps.speciality from tb2
+                join
+                physician_speciality as ps
+                on (tb2.physician_id = ps.physician_id)
+            )
+
+        select speciality, count(speciality) as speciality_count from tb3
+        group by speciality;
+        """
+    )
+)
