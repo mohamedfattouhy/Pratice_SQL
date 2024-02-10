@@ -222,3 +222,28 @@ query8 = conn.execute(
         """
     )
 )
+
+# ------------- Query 9 -------------
+# Find the top 2 accounts with the maximum number of unique patients on a monthly basis
+
+# I calculate the number of (unique) patients per month and account_id,
+# then use the row_number() window function to keep the top 2 per month
+query9 = conn.execute(
+    text(
+        """
+        with
+            patient_logs_temp1 as (
+                select month_name, account_id, count(distinct patient_id) as patient_count
+                from patient_logs
+                group by month_name, account_id
+                order by month_name asc, patient_count desc, account_id asc),
+
+            patient_logs_temp2 as (
+                select *, row_number() over(partition by month_name) as rn from patient_logs_temp1
+                )
+
+        select month_name, account_id, patient_count from patient_logs_temp2
+        where rn <= 2;
+        """
+    )
+)
