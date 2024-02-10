@@ -20,6 +20,7 @@ The main objective of this project is to train myself to practice intermediate t
 
 The repository is organized as follows: 
   - `/configuration` is the directory where you need to store variables to connect to the database.
+  - `create_table.py` contains SQL queries to create the tables needed to answer the questions.
   - `SQL_Queries.py` contains my SQL queries to answer the various questions.
 
 
