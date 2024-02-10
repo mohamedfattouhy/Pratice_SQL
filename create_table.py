@@ -288,3 +288,42 @@ patient_logs_table = conn.execute(
         """
     )
 )
+
+# ------------- Query 10 -------------
+# Create weather table
+weather_table = conn.execute(
+    text(
+        """
+        drop table if exists weather cascade;
+
+        create table if not exists weather (
+        id int primary key,
+        city varchar(50) not null,
+        temperature int not null,
+        day date);
+
+        insert into weather values
+        (1, 'London', -1, str_to_date('2021-01-01', '%Y-%m-%d')),
+        (2, 'London', -2, str_to_date('2021-01-02', '%Y-%m-%d')),
+        (3, 'London', 4, str_to_date('2021-01-03', '%Y-%m-%d')),
+        (4, 'London', 1, str_to_date('2021-01-04', '%Y-%m-%d')),
+        (5, 'London', -2, str_to_date('2021-01-05', '%Y-%m-%d')),
+        (6, 'London', -5, str_to_date('2021-01-06', '%Y-%m-%d')),
+        (7, 'London', -7, str_to_date('2021-01-07', '%Y-%m-%d')),
+        (8, 'London', 5, str_to_date('2021-01-08', '%Y-%m-%d')),
+        (9, 'London', -20, str_to_date('2021-01-09', '%Y-%m-%d')),
+        (10, 'London', 20, str_to_date('2021-01-10', '%Y-%m-%d')),
+        (11, 'London', 22, str_to_date('2021-01-11', '%Y-%m-%d')),
+        (12, 'London', -1, str_to_date('2021-01-12', '%Y-%m-%d')),
+        (13, 'London', -2, str_to_date('2021-01-13', '%Y-%m-%d')),
+        (14, 'London', -2, str_to_date('2021-01-14', '%Y-%m-%d')),
+        (15, 'London', -4, str_to_date('2021-01-15', '%Y-%m-%d')),
+        (16, 'London', -9, str_to_date('2021-01-16', '%Y-%m-%d')),
+        (17, 'London', 0, str_to_date('2021-01-17', '%Y-%m-%d')),
+        (18, 'London', -10, str_to_date('2021-01-18', '%Y-%m-%d')),
+        (19, 'London', -11, str_to_date('2021-01-19', '%Y-%m-%d')),
+        (20, 'London', -12, str_to_date('2021-01-20', '%Y-%m-%d')),
+        (21, 'London', -11, str_to_date('2021-01-21', '%Y-%m-%d'));
+        """
+    )
+)
