@@ -255,3 +255,36 @@ patient_treatment_table = conn.execute(
         """
     )
 )
+
+# ------------- Query 9 -------------
+# Create patient_logs table
+patient_logs_table = conn.execute(
+    text(
+        """
+        drop table if exists patient_logs;
+
+        create table patient_logs (
+        account_id int,
+        date date,
+        patient_id int);
+
+        insert into patient_logs values
+        (1, str_to_date('02-01-2020', '%d-%m-%Y'), 100),
+        (1, str_to_date('27-01-2020', '%d-%m-%Y'), 200),
+        (2, str_to_date('01-01-2020', '%d-%m-%Y'), 300),
+        (2, str_to_date('21-01-2020', '%d-%m-%Y'), 400),
+        (2, str_to_date('21-01-2020', '%d-%m-%Y'), 300),
+        (2, str_to_date('01-01-2020', '%d-%m-%Y'), 500),
+        (3, str_to_date('20-01-2020', '%d-%m-%Y'), 400),
+        (1, str_to_date('04-03-2020', '%d-%m-%Y'), 500),
+        (3, str_to_date('20-01-2020', '%d-%m-%Y'), 450);
+
+        # I'm adding a 'month_name' column to get the months as strings
+        alter table patient_logs
+        add column month_name varchar(10);
+
+        update patient_logs
+        set month_name = monthname(date);
+        """
+    )
+)
