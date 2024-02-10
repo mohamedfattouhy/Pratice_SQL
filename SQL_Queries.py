@@ -247,3 +247,38 @@ query9 = conn.execute(
         """
     )
 )
+
+
+# ------------- Query 10 -------------
+# Write a SQL Query to fetch “N” consecutive records from
+# a table based on a certain condition
+
+# The solution to this question lies not with me, but with the author of the questions.
+# The idea of solution is to create a column whose values are constant on
+# consecutive days (when the temperature is negative).
+# I've decided to put the solution in a stored procedure,
+# so that I can call the query as a function with a parameter
+query10 = conn.execute(
+    text(
+        """
+        create procedure weather_neg_temp_consecutive(in cnt int)
+        with
+            weather_temp1 as
+                (select *, id - row_number() over (order by id) as diff
+                from weather w
+                where w.temperature < 0),
+
+            weather_temp2 as
+                (select *,
+                count(*) over (partition by diff order by diff) as cnt
+                from weather_temp1)
+
+        select id, city, temperature, day
+        from weather_temp2
+        where weather_temp2.cnt = cnt;
+
+        # Obtain 5 consecutive records where the temperature was negative
+        call weather_neg_temp_consecutive(5);
+        """
+    )
+)
